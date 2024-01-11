@@ -1,0 +1,20 @@
+version: "3.3"
+services:
+  csvtocsvw:
+  image: "ghcr.io/mat-o-lab/csvtocsvw:latest"
+  container_name: ${CSVTOCSVW_CONTAINER_NAME}
+  environment:
+    APP_MODE: "production"
+    PORT: ${CSVTOCSVW_APP_PORT}
+    #ADMIN_MAIL: ${ADMIN_MAIL}
+  ports:
+    - ${CSVTOCSVW_APP_PORT}:${CSVTOCSVW_APP_PORT}
+  restart: always
+  # networks:
+  #   - ckannet
+  entrypoint: ["uvicorn", "app:app", "--host", "0.0.0.0", "--port", "${CSVTOCSVW_APP_PORT}", "--workers", "1","--proxy-headers"]
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:${CSVTOCSVW_APP_PORT}/info"]
+    interval: 60s
+    timeout: 10s
+    retries: 20
